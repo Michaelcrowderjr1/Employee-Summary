@@ -10,28 +10,21 @@ const outputPath = path.join(OUTPUT_DIR, "team.html");
 
 const render = require("./lib/htmlRenderer");
 
+const teamMembers = []; //Will contain the team members data
+const teamArray = [];   //Will contain all the team IDs.
+
 
 // Write code to use inquirer to gather information about the development team members,
 // and to create objects for each team member (using the correct classes as blueprints!)
 
-async function init() {
-    const teamMembers = []; //Will contain the team members data
-    const teamArray = [];   //Will contain all the team IDs.
+function createManager() {
 
-    console.log("Building your team summary");
-    // Set variables
-    let teamHTML;
-    let name;
-    let id;
-    let role;
-    let email;
-
-    // Prompts user to answer the basic questions of the employee
-    await inquirer.prompt([ 
+    console.log("Building your team summary - Enter manager info first");
+    inquirer.prompt([
         {
             type: "input",
-            message: `What is the employee's name?`,
             name: "name",
+            message: "What is the manager's name?",
             validate: answer => {
                 if (answer !== "") {
                     return true;
@@ -41,8 +34,8 @@ async function init() {
         },
         {
             type: "input",
-            message: `What is the employee's id?`,
             name: "id",
+            message: "What is the manager's id?",
             validate: answer => {
                 const pass = answer.match(
                     /^[1-9]\d*$/
@@ -55,7 +48,100 @@ async function init() {
         },
         {
             type: "input",
-            message: `What is the employee's Email?`,
+            name: "email",
+            message: "What is the manager's email?",
+            validate: answer => {
+                const pass = answer.match(
+                    /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
+                );
+                if (pass) {
+                    return true;
+                }
+                return "Email address must be valid.";
+            }
+        },
+        {
+            type: "input",
+            name: "officeNumber",
+            message: "What is the manager's office number (10 digit number - no dashes)?",
+            validate: answer => {
+                const pass = answer.match(
+                    /^\d{10}$/
+                );
+                if (pass) {
+                    return true;
+                }
+                return "Number must be numeric.";
+            }
+        }
+    ]).then(answers => {
+        const manager = new Manager(answers.name, answers.id, answers.email, answers.officeNumber);
+        teamMembers.push(manager);
+        teamArray.push(answers.id);
+        createTeam();
+    });
+}
+
+function createTeam(){
+    inquirer.prompt(
+        {
+            type: "list",
+            message: `What is the employee role of the next entry?`,
+            name: "role",
+            choices: ["Engineer", "Intern", "Exit"]
+        }
+    ).then(answers => {
+        console.log("role", answers.role)
+        switch(answers.role){
+            case "Engineer":
+                createEngineer();
+                break;
+            case "Intern":
+                createIntern();
+                break;
+            case "Exit":
+                buildTeam();
+        }
+        
+    })
+
+    
+}
+
+function createEngineer(){
+    inquirer.prompt([
+        {
+            type: "input",
+            message: `What is the Engineer's name?`,
+            name: "name",
+            validate: answer => {
+                if (answer !== "") {
+                    return true;
+                }
+                return "Please enter a name.";
+            }
+        },
+        {
+            type: "input",
+            message: `What is the Enginner's id?`,
+            name: "id",
+            validate: answer => {
+                const pass = answer.match(
+                    /^[1-9]\d*$/
+                );
+                if (pass) {
+                    if (teamArray.includes(answer)) {
+                        return "This ID is already taken. Please enter a different number.";
+                    } else {
+                        return true;
+                    }
+                }
+                return "Answer must be an integer greater than zero.";
+            }
+        },
+        {
+            type: "input",
+            message: `What is the Engineer's Email?`,
             name: "email",
             validate: answer => {
                 const pass = answer.match(
@@ -68,95 +154,92 @@ async function init() {
             }
         },
         {
-            type: "list",
-            message: `what the employee's role?`,
-            name: "role",
-            choices: ["Engineer", "Intern", "Manager"]
+            type: "input",
+            message: "What is the Engineer's GitHub?",
+            name: "github",
+            validate: answer => {
+                if (answer !== "") {
+                    return true;
+                }
+                return "This information is required.";
+            }
         }
-    ])
-    .then((data) => {
-
-        // Takes data from user and places value in global variables
-        name = data.name;
-        id = data.id;
-        role = data.role;
-        email = data.email;
-    });
-
-    // Switch Case depending on the role of the employee
-    switch (role){
-        case "Manager":
-
-            // Input extra info manager
-            await inquirer.prompt([
-                {
-                    type: "input",
-                    message: "What is the Manager's Office Number? (10 digit number - no dashes)?",
-                    name: "officeNumber",
-                    validate: answer => {
-                        const pass = answer.match(
-                            /^\d{10}$/
-                        );
-                        if (pass) {
-                            return true;
-                        }
-                        return "Not a valid phone number.";
-                    }
-                }
-            ])
-            .then((data) => {
-
-                // Create a new object with all avaiable user input data
-                const manager = new Manager(name, id, email, data.officeNumber);
-
-            });
-            break;
-
-        //Input extra info for intern
-        case "Intern":
-            await inquirer.prompt([
-                {
-                    type: "input",
-                    message: "What school is the Intern attending?",
-                    name: "school",
-                    validate: answer => {
-                        if (answer !== "") {
-                            return true;
-                        }
-                        return "This information is required.";
-                    }
-                }
-            ])
-            .then((data) => {
-                const intern = new Intern(name, id, email, data.school);
-
-            });
-            break;
-
-        //Input extra info for engineer
-        case "Engineer":
-            await inquirer.prompt([
-                {
-                    type: "input",
-                    message: "What is the Engineer's GitHub?",
-                    name: "github",
-                    validate: answer => {
-                        if (answer !== "") {
-                            return true;
-                        }
-                        return "This information is required.";
-                    }
-                }
-            ])
-            .then((data) => {
-                const engineer = new Engineer(name, id, email, data.github);
-
-            });
-            break;
-
-    } // End of Switch Case
+    ]).then((answers) => {
+        const engineer = new Engineer(answers.name, answers.id, answers.email, answers.github);
+        teamMembers.push(engineer);
+        teamArray.push(answers.id);
+        createTeam()
+    })
 }
 
+
+function createIntern(){
+    inquirer.prompt([
+        {
+            type: "input",
+            message: `What is the Intern's name?`,
+            name: "name",
+            validate: answer => {
+                if (answer !== "") {
+                    return true;
+                }
+                return "Please enter a name.";
+            }
+        },
+        {
+            type: "input",
+            message: `What is the Intern's id?`,
+            name: "id",
+            validate: answer => {
+                const pass = answer.match(
+                    /^[1-9]\d*$/
+                );
+                if (pass) {
+                    if (teamArray.includes(answer)) {
+                        return "This ID is already taken. Please enter a different number.";
+                    } else {
+                        return true;
+                    }
+                }
+                return "Answer must be an integer greater than zero.";
+            }
+        },
+        {
+            type: "input",
+            message: `What is the Intern's Email?`,
+            name: "email",
+            validate: answer => {
+                const pass = answer.match(
+                    /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
+                );
+                if (pass) {
+                    return true;
+                }
+                return "Email address must be valid.";
+            }
+        },
+        {
+            type: "input",
+            message: "What school is the Intern attending?",
+            name: "school",
+            validate: answer => {
+                if (answer !== "") {
+                    return true;
+                }
+                return "This information is required.";
+            }
+        }
+    ]).then((answers) => {
+        const intern = new Intern(answers.name, answers.id, answers.email, answers.school);
+        teamMembers.push(intern);
+        teamArray.push(answers.id);
+        createTeam()
+    })
+}
+
+function buildTeam(){
+    fs.writeFileSync(outputPath, render(teamMembers), "utf-8")
+}
 
 
 // After the user has input all employees desired, call the `render` function (required
@@ -179,4 +262,4 @@ async function init() {
 // object with the correct structure and methods. This structure will be crucial in order
 // for the provided `render` function to work! ```
 
-init();
+createManager();
