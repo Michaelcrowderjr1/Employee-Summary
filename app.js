@@ -91,7 +91,6 @@ function createTeam(){
             choices: ["Engineer", "Intern", "Exit"]
         }
     ).then(answers => {
-        console.log("role", answers.role)
         switch(answers.role){
             case "Engineer":
                 createEngineer();
@@ -239,6 +238,7 @@ function createIntern(){
 
 function buildTeam(){
     fs.writeFileSync(outputPath, render(teamMembers), "utf-8")
+    console.log(`The ${outputPath} file has been created`)
 }
 
 
