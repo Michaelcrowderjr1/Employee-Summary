@@ -60,10 +60,6 @@ Finally, the fs.writeFileSync is used to render (using the information entered, 
 ### Employee Summary Team Html Run
 [Employee Summary Video Link](https://drive.google.com/file/d/1Si1Zc_tUk_P-ihOjGY-a27yIQTYs0bsd/view?usp=sharing)
 
-### Employee Summary Team Html Run Gif
-[Employee Summary Gif Link](https://drive.google.com/file/d/1j7UbpPcjuGYGrJo79uYLkMQj3fsQGk8_/view?usp=sharing)
-
-
 
 ## License
 
