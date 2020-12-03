@@ -38,6 +38,15 @@ When the user runs node app.js, the application uses the inquirer package to pro
 
 The application will prompt for the manager information first.  Then the application will prompt for whether the user would like to enter Intern or Engineer information.  Otherwise, the user can choose to exit.  
 
+Roster output
+The project must generate a team.html page in the output directory, that displays a nicely formatted team roster. Each team member should display the following in no particular order:
+* Name
+* Role
+* ID
+* Role-specific property (School - Intern, link to GitHub profile - Engineer, or office number - Manager)
+
+Each entry is validated.
+
 Finally, the fs.writeFileSync is used to render (using the information entered, main.html, manager.html, engineer.html and intern.html) "team.html" file in the output directory.
 
 ### Employee Summary node app.js Image
@@ -50,6 +59,10 @@ Finally, the fs.writeFileSync is used to render (using the information entered, 
 
 ### Employee Summary Team Html Run
 [Employee Summary Video Link](https://drive.google.com/file/d/1Si1Zc_tUk_P-ihOjGY-a27yIQTYs0bsd/view?usp=sharing)
+
+### Employee Summary Team Html Run Gif
+[Employee Summary Gif Link](https://drive.google.com/file/d/1j7UbpPcjuGYGrJo79uYLkMQj3fsQGk8_/view?usp=sharing)
+
 
 
 ## License
