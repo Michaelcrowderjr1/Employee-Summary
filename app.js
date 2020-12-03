@@ -75,6 +75,7 @@ function createManager() {
             }
         }
     ]).then(answers => {
+        answers.officeNumber = answers.officeNumber.substr(0, 3) + '-' + answers.officeNumber.substr(3, 3) + '-' + answers.officeNumber.substr(6,4)
         const manager = new Manager(answers.name, answers.id, answers.email, answers.officeNumber);
         teamMembers.push(manager);
         teamArray.push(answers.id);
@@ -237,6 +238,9 @@ function createIntern(){
 }
 
 function buildTeam(){
+    if (!fs.existsSync(OUTPUT_DIR)) {
+        fs.mkdirSync(OUTPUT_DIR)
+    }
     fs.writeFileSync(outputPath, render(teamMembers), "utf-8")
     console.log(`The ${outputPath} file has been created`)
 }
